@@ -30,7 +30,7 @@ public class EcommerceController {
     }
 
     @PostMapping("/orders/{customerId}")
-    public ResponseEntity<String> placeOrder(@PathVariable Long customerId) {
+    public ResponseEntity<Order> placeOrder(@PathVariable Long customerId) {
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isPresent()) {
             List<CartItem> cartItems = cartItemRepository.findByCustomerId(customerId);
@@ -38,6 +38,7 @@ public class EcommerceController {
                 // Process the order and create an Order object
                 Order order = new Order();
                 order.setCustomer(customer.get());
+                order.setStatus("NotShipped");
                 // Set other order details such as order items, total amount, etc.
 
                 // Save the order in the database
@@ -45,10 +46,11 @@ public class EcommerceController {
 
                 // Clear the cart for the customer
                 cartItemRepository.deleteAll(cartItems);
+                order.addAllCartItems(cartItems);
 
-                return ResponseEntity.ok("Order placed successfully.");
+                return ResponseEntity.ok(savedOrder);
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart is empty.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
         } else {
             return ResponseEntity.notFound().build();
@@ -66,22 +68,22 @@ public class EcommerceController {
         }
     }
 
-    // @PutMapping("/orders/{orderId}/cancel")
-    // public ResponseEntity<Order> cancelOrder(@PathVariable Long orderId) {
-    // Optional<Order> order = orderRepository.findById(orderId);
-    // if (order.isPresent()) {
-    // Order updatedOrder = order.get();
-    // if ("Not Shipped".equalsIgnoreCase(updatedOrder.getStatus())) {
-    // updatedOrder.setStatus("Cancelled");
-    // orderRepository.save(updatedOrder);
-    // return ResponseEntity.ok(updatedOrder);
-    // } else {
-    // return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-    // }
-    // } else {
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    // }
-    // }
+    @PutMapping("/orders/{orderId}/cancel")
+    public ResponseEntity<Order> cancelOrder(@PathVariable Long orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (order.isPresent()) {
+            Order updatedOrder = order.get();
+            if ("NotShipped".equalsIgnoreCase(updatedOrder.getStatus())) {
+                updatedOrder.setStatus("Cancelled");
+                orderRepository.save(updatedOrder);
+                return ResponseEntity.ok(updatedOrder);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
     // Add items to cart
     @PostMapping("/cart/{customerId}")

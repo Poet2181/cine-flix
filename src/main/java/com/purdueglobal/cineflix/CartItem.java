@@ -1,5 +1,7 @@
 package com.purdueglobal.cineflix;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -12,7 +14,12 @@ public class CartItem {
     @ManyToOne
     private Customer customer;
     private Integer quantity;
-   
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     public Long getId() {
         return id;
     }
@@ -43,5 +50,13 @@ public class CartItem {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }
