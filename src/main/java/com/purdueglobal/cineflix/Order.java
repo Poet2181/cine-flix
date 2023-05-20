@@ -1,7 +1,10 @@
 package com.purdueglobal.cineflix;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.*;
 
@@ -11,6 +14,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonFormat(pattern = "MM/dd/yyyy")
+    private LocalDate dateCreated;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -64,5 +70,13 @@ public class Order {
 
     public void addAllCartItems(List<CartItem> cartItems) {
         this.cartItems.addAll(cartItems);
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

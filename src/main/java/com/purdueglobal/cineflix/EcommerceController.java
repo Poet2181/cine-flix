@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,7 @@ public class EcommerceController {
                 Order order = new Order();
                 order.setCustomer(customer.get());
                 order.setStatus("NotShipped");
+                order.setDateCreated(LocalDate.now());
                 // Set other order details such as order items, total amount, etc.
 
                 // Save the order in the database
@@ -62,7 +64,10 @@ public class EcommerceController {
     public ResponseEntity<Order> getOrderStatus(@PathVariable Long orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isPresent()) {
-            return ResponseEntity.ok(order.get());
+            Order fetchedOrder = order.get();
+            List<CartItem> cartItems = cartItemRepository.findByOrderId(fetchedOrder.getId());
+            fetchedOrder.addAllCartItems(cartItems);
+            return ResponseEntity.ok(fetchedOrder);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
