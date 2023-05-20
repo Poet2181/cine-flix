@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +68,8 @@ public class EcommerceController {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isPresent()) {
             Order fetchedOrder = order.get();
+            fetchedOrder.setTotalItems(orderRepository.getTotalItemsByOrderId(orderId));
+            fetchedOrder.setTotalPrice(orderRepository.getTotalPriceByOrderId(orderId));
             return ResponseEntity.ok(fetchedOrder);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -112,9 +115,12 @@ public class EcommerceController {
     }
 
     @GetMapping("/cart/{customerId}")
-    public ResponseEntity<List<CartItem>> getCartItems(@PathVariable Long customerId) {
+    public ResponseEntity<CartResponse> getCartItems(@PathVariable Long customerId) {
         List<CartItem> cartItems = cartItemRepository.findByCustomerId(customerId);
-        return ResponseEntity.ok(cartItems);
+        BigDecimal totalPrice = cartItemRepository.getTotalPriceByCustomerId(customerId);
+        int totalItems = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
+        CartResponse response = new CartResponse(cartItems, totalItems, totalPrice);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/cart/{customerId}")
