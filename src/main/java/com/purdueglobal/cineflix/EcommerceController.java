@@ -41,15 +41,17 @@ public class EcommerceController {
                 order.setCustomer(customer.get());
                 order.setStatus("NotShipped");
                 order.setDateCreated(LocalDate.now());
-                // Set other order details such as order items, total amount, etc.
+
+                // Add the cart items to the order
+                for (CartItem cartItem : cartItems) {
+                    order.addCartItem(cartItem);
+                }
 
                 // Save the order in the database
                 Order savedOrder = orderRepository.save(order);
 
                 // Clear the cart for the customer
-                cartItemRepository.deleteAll(cartItems);
-                order.addAllCartItems(cartItems);
-
+                clearCart(customerId);
                 return ResponseEntity.ok(savedOrder);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -65,8 +67,6 @@ public class EcommerceController {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isPresent()) {
             Order fetchedOrder = order.get();
-            List<CartItem> cartItems = cartItemRepository.findByOrderId(fetchedOrder.getId());
-            fetchedOrder.addAllCartItems(cartItems);
             return ResponseEntity.ok(fetchedOrder);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -122,7 +122,10 @@ public class EcommerceController {
         Optional<Customer> customer = customerRepository.findById(customerId);
         if (customer.isPresent()) {
             List<CartItem> cartItems = cartItemRepository.findByCustomerId(customerId);
-            cartItemRepository.deleteAll(cartItems);
+            cartItems.forEach(cartItem -> cartItem.setCustomer(null)); // Remove customer association
+            cartItemRepository.saveAll(cartItems); // Update the cart items in the database
+            cartItemRepository.deleteAll(cartItems); // Delete the cart items
+    
             return ResponseEntity.ok("Cart items cleared successfully.");
         } else {
             return ResponseEntity.notFound().build();

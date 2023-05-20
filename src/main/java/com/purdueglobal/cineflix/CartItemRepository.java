@@ -9,7 +9,7 @@ import java.util.List;
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     List<CartItem> findByCustomerId(Long customerId);
 
-    @Query("SELECT c FROM CartItem c WHERE c.order.id = :orderId")
+    @Query("SELECT DISTINCT c FROM CartItem c JOIN FETCH c.product WHERE c.order.id = :orderId")
     List<CartItem> findByOrderId(@Param("orderId") Long orderId);
     
 }

@@ -11,6 +11,8 @@ public class CartItem {
     private Long id;
     @ManyToOne
     private Product product;
+
+    @JsonIgnore
     @ManyToOne
     private Customer customer;
     private Integer quantity;
