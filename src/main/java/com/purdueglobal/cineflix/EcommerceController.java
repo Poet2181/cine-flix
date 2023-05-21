@@ -117,7 +117,7 @@ public class EcommerceController {
     @GetMapping("/cart/{customerId}")
     public ResponseEntity<CartResponse> getCartItems(@PathVariable Long customerId) {
         List<CartItem> cartItems = cartItemRepository.findByCustomerId(customerId);
-        BigDecimal totalPrice = cartItemRepository.getTotalPriceByCustomerId(customerId);
+        BigDecimal totalPrice = Optional.ofNullable(cartItemRepository.getTotalPriceByCustomerId(customerId)).orElse(BigDecimal.ZERO);
         int totalItems = cartItems.stream().mapToInt(CartItem::getQuantity).sum();
         CartResponse response = new CartResponse(cartItems, totalItems, totalPrice);
         return ResponseEntity.ok(response);
@@ -157,6 +157,12 @@ public class EcommerceController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/customers/{customerId}/orders")
+    public ResponseEntity<List<Order>> getCustomerOrders(@PathVariable Long customerId) {
+        List<Order> orders = orderRepository.findByCustomerId(customerId);
+        return ResponseEntity.ok(orders);
     }
 
 }
