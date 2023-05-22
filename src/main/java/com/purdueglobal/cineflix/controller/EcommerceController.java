@@ -174,4 +174,16 @@ public class EcommerceController {
         return ResponseEntity.ok(orders);
     }
 
+    @PostMapping("/customers")
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+        // Check if a customer with the same email already exists
+        Optional<Customer> existingCustomer = customerRepository.findByEmail(customer.getEmail());
+        if (existingCustomer.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        Customer savedCustomer = customerRepository.save(customer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
+    }
+
 }
