@@ -1,4 +1,4 @@
-package com.purdueglobal.cineflix;
+package com.purdueglobal.cineflix.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

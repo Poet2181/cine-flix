@@ -1,9 +1,10 @@
-package com.purdueglobal.cineflix;
+package com.purdueglobal.cineflix.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import com.purdueglobal.cineflix.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

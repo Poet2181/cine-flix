@@ -1,4 +1,4 @@
-package com.purdueglobal.cineflix;
+package com.purdueglobal.cineflix.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.purdueglobal.cineflix.model.CartItem;
+import com.purdueglobal.cineflix.model.Customer;
 import jakarta.persistence.*;
 
 @Entity

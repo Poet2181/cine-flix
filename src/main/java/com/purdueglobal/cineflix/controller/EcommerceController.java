@@ -1,5 +1,14 @@
-package com.purdueglobal.cineflix;
+package com.purdueglobal.cineflix.controller;
 
+import com.purdueglobal.cineflix.model.CartResponse;
+import com.purdueglobal.cineflix.model.CartItem;
+import com.purdueglobal.cineflix.model.Customer;
+import com.purdueglobal.cineflix.model.Order;
+import com.purdueglobal.cineflix.model.Product;
+import com.purdueglobal.cineflix.repository.CartItemRepository;
+import com.purdueglobal.cineflix.repository.CustomerRepository;
+import com.purdueglobal.cineflix.repository.OrderRepository;
+import com.purdueglobal.cineflix.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

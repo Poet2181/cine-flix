@@ -1,4 +1,6 @@
-package com.purdueglobal.cineflix;
+package com.purdueglobal.cineflix.model;
+
+import com.purdueglobal.cineflix.model.CartItem;
 
 import java.math.BigDecimal;
 import java.util.List;
